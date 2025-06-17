@@ -27,9 +27,14 @@ ssh-add $file
 
 if (!(gh auth status)) {
     Write-Host "Seems like you haven't set up your gh yet."
-    gh auth login -h github.com -s admin:ssh_signing_key repo gist workflow read:org
+    gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org
 }
-$keyname = Read-Host "Enter your ssh key display name for GitHub"
-gh ssh-key add $path --type signing --title $keyname
+$keyname = Read-Host "Enter your SSH key display name for GitHub (leave empty to skip)"
+if (-not [string]::IsNullOrWhiteSpace($keyname)) {
+    gh ssh-key add $path --type signing --title $keyname
+    Write-Host "SSH signing key added to GitHub."
+} else {
+    Write-Host "Skipping SSH signing key upload to GitHub."
+}
 Write-Host "git sign setup has been completed"
 pause
