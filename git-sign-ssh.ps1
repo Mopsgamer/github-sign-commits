@@ -1,3 +1,9 @@
+trap {
+    Write-Host "git sign setup has been interrupted"
+    pause
+    exit
+}
+
 git config --global gpg.format ssh
 $email = git config --get user.email
 if ([string]::IsNullOrEmpty($email)) {
@@ -20,7 +26,9 @@ ssh-keygen -t ed25519 -C $email.Trim() -N "" -f $file
 
 git config --global commit.gpgsign true
 git config --global user.signingkey $path
-Get-Service -Name ssh-agent | Set-Service -StartupType Manual
+if(!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
+    exit
+}
 Start-Service ssh-agent
 ssh-add $file
 
@@ -29,7 +37,7 @@ if (!(gh auth status)) {
     Write-Host "Seems like you haven't set up your gh yet."
     gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org
 }
-$keyname = Read-Host "Enter your SSH key display name for GitHub (leave empty to skip)"
+$keyname = Read-Host "Enter your SSH key display name for GitHub (leave empty to skip signing key creation)"
 if (-not [string]::IsNullOrWhiteSpace($keyname)) {
     gh ssh-key add $path --type signing --title $keyname
     Write-Host "SSH signing key added to GitHub."
