@@ -1,5 +1,3 @@
-set -e
-
 trap 'echo "git sign setup has been interrupted"; exit 1' SIGINT
 
 git config --global gpg.format ssh
@@ -27,13 +25,13 @@ ssh-keygen -t ed25519 -C "$(echo $email | xargs)" -N "" -f "$file"
 git config --global commit.gpgsign true
 git config --global user.signingkey "$path"
 
-if ! pgrep -x ssh-agent >/dev/null; then
+if ! pgrep -x ssh-agent; then
     eval "$(ssh-agent -s)"
 fi
 
 ssh-add "$file"
 
-if ! gh auth status >/dev/null 2>&1; then
+if ! gh auth status; then
     echo "Seems like you haven't set up your gh yet."
     gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org
 fi
