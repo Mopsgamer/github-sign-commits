@@ -1,3 +1,5 @@
+set -e
+
 trap 'echo "git sign setup has been interrupted"; exit 1' SIGINT
 
 git config --global gpg.format ssh
