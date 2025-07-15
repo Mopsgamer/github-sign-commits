@@ -4,12 +4,12 @@ trap 'echo "git sign setup has been interrupted"; exit 1' SIGINT
 
 git config --global gpg.format ssh
 
-email=$(git config --get user.email || true)
+email=$(git config --get user.email || "")
 if [ -z "$email" ]; then
     echo "Seems like you haven't set up your git yet."
     read -p "Enter your email address: " email
     git config --global user.email "$email"
-    name=$(git config --get user.name || true)
+    name=$(git config --get user.name || "")
     if [ -z "$name" ]; then
         read -p "Enter your name: " name
         git config --global user.name "$name"
