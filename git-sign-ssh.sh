@@ -25,7 +25,7 @@ ssh-keygen -t ed25519 -C "$(echo $email | xargs)" -N "" -f "$file" < /dev/tty
 git config --global commit.gpgsign true
 git config --global user.signingkey "$path"
 
-if ! pgrep -x ssh-agent; then
+if ! pgrep -x ssh-agent > /dev/null; then
     eval "$(ssh-agent -s)"
 fi
 
