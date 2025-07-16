@@ -31,7 +31,9 @@ if ! pgrep -x ssh-agent; then
     eval "$(ssh-agent -s)"
 fi
 
+set +e
 ssh-add "$file"
+set -e
 
 if ! gh auth status; then
     echo "Seems like you haven't set up your gh yet."
