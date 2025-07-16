@@ -10,5 +10,5 @@ irm https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/m
 
 ### Bash
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/git-sign-ssh.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/git-sign-ssh.sh | sh
 ```
