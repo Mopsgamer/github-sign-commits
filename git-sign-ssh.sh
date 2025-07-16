@@ -1,6 +1,4 @@
-set -e
-
-trap 'echo "git sign setup has been interrupted"; exit 1' SIGINT
+trap 'echo "git sign setup has been interrupted"; exit 1' 2
 
 git config --global gpg.format ssh
 
@@ -31,9 +29,7 @@ if ! pgrep -x ssh-agent; then
     eval "$(ssh-agent -s)"
 fi
 
-set +e
 ssh-add "$file"
-set -e
 
 if ! gh auth status; then
     echo "Seems like you haven't set up your gh yet."
