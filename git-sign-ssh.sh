@@ -29,6 +29,8 @@ if ! pgrep -x ssh-agent > /dev/null; then
     eval "$(ssh-agent -s)"
 fi
 
+ssh-add -l |
+grep -q "$(ssh-keygen -lf "$file" | awk '{print $2}')" ||
 ssh-add "$file" > /dev/null
 
 if ! gh auth status > /dev/null; then
