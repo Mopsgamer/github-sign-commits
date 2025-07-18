@@ -1,3 +1,10 @@
+required_cmds=(git ssh-keygen pgrep ssh-agent ssh-add gh read awk grep xargs mkdir)
+for cmd in "${required_cmds[@]}"; do
+    if ! command -v "$cmd" > /dev/null 2>&1; then
+        echo "Error: Required command '$cmd' not found. Please install it before running this script."
+        exit 1
+    fi
+done
 trap 'echo "git sign setup has been interrupted"; exit 1' 2
 
 git config --global gpg.format ssh

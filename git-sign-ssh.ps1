@@ -4,6 +4,16 @@ trap {
     exit
 }
 
+# Check required commands
+$required_cmds = @('git', 'ssh-keygen', 'ssh-agent', 'ssh-add', 'gh')
+foreach ($cmd in $required_cmds) {
+    if (-not (Get-Command $cmd -ErrorAction SilentlyContinue)) {
+        Write-Host "Error: Required command '$cmd' not found. Please install it before running this script."
+        pause
+        exit 1
+    }
+}
+
 git config --global gpg.format ssh
 $email = git config --get user.email
 if ([string]::IsNullOrEmpty($email)) {
