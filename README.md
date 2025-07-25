@@ -1,5 +1,5 @@
 # github-sign-commits
-Scripts for automatic git signing setup. Requires `git` and `gh`.
+Sign commits for git, GitHub 😡!
 
 ## SSH
 
@@ -11,4 +11,9 @@ irm https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/m
 ### Bash Shell
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/git-sign-ssh.sh | bash
+```
+
+### Fish Shell
+```fish
+curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/git-sign-ssh.fish | fish
 ```
