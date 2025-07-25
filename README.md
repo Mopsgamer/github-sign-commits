@@ -12,8 +12,3 @@ irm https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/m
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/sign.sh | bash
 ```
-
-### Fish Shell
-```bash
-curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/sign.fish | fish
-```
