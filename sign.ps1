@@ -2,15 +2,13 @@ $required_cmds = @('git', 'ssh-keygen', 'ssh-agent', 'ssh-add', 'gh')
 foreach ($cmd in $required_cmds) {
     if (-not (Get-Command $cmd -ErrorAction SilentlyContinue)) {
         Write-Host "Error: Required command '$cmd' not found. Please install it before running this script."
-        pause
         exit 1
     }
 }
 
 trap {
     Write-Host "git sign setup has been interrupted"
-    pause
-    exit
+    exit 1
 }
 
 git config --global gpg.format ssh
@@ -41,7 +39,7 @@ ssh-keygen -t ed25519 -C $email.Trim() -N "" -f $file
 git config --global commit.gpgsign true
 git config --global user.signingkey $path
 if(!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
-    exit
+    exit 1
 }
 Start-Service ssh-agent
 ssh-add $file
@@ -49,14 +47,22 @@ ssh-add $file
 
 if (!(gh auth status)) {
     Write-Host "Seems like you haven't set up your gh yet."
-    gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org
+    if (!(gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org) {
+		exit 1
+    }
 }
 $keyname = Read-Host "Enter your SSH key display name for GitHub (leave empty to skip signing key creation)"
 if (-not [string]::IsNullOrWhiteSpace($keyname)) {
-    gh ssh-key add $path --type signing --title $keyname
+    if (!(gh ssh-key add $path --type signing --title $keyname) {
+		if (!(gh auth refresh -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org)) {
+			exit 1
+		}
+		if (!(gh ssh-key add $path --type signing --title $keyname)) {
+			exit 1
+		}
+	}
     Write-Host "SSH signing key added to GitHub."
 } else {
     Write-Host "Skipping SSH signing key upload to GitHub."
 }
 Write-Host "git sign setup has been completed"
-pause

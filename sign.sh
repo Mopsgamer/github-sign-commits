@@ -44,15 +44,25 @@ ssh-add "$file" > /dev/null
 
 if ! gh auth status > /dev/null; then
     echo "Seems like you haven't set up your gh yet."
-    gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org < /dev/tty
+    if ! gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org < /dev/tty; then
+        exit 1
+    fi
 fi
 
 read -p "Enter your SSH key display name for GitHub (leave empty to skip signing key creation): " keyname < /dev/tty
 if [ -n "$keyname" ]; then
-    gh ssh-key add "$path" --type signing --title "$keyname" > /dev/null
+    if ! gh ssh-key add "$path" --type signing --title "$keyname" > /dev/null; then
+        if ! gh auth refresh -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org < /dev/tty; then
+            exit 1
+        fi
+        if ! gh ssh-key add "$path" --type signing --title "$keyname" > /dev/null; then
+            exit 1
+        fi
+    fi
     echo "SSH signing key added to GitHub."
 else
     echo "Skipping SSH signing key upload to GitHub."
 fi
 
 echo "git sign setup has been completed"
+
