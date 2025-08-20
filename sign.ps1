@@ -35,8 +35,7 @@ if (-not (Test-Path -Path $dir)) {
 $file = "$dir/gitsign"
 $path = "$file.pub"
 
-ssh-keygen -t ed25519 -C $email.Trim() -N "" -f $file
-if ($LASTEXITCODE -ne 0) { exit 1 }
+ssh-keygen -t ed25519 -C $email -N "" -f $file
 
 git config --global commit.gpgsign true
 git config --global user.signingkey $path
@@ -45,7 +44,6 @@ Get-Service -Name ssh-agent -ErrorAction SilentlyContinue | Set-Service -Startup
 Start-Service ssh-agent -ErrorAction SilentlyContinue
 
 ssh-add $file
-if ($LASTEXITCODE -ne 0) { exit 1 }
 
 gh auth status
 if ($LASTEXITCODE -ne 0) {
