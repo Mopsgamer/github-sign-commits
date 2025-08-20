@@ -34,16 +34,17 @@ if (!(Test-Path -Path $dir)) {
 
 $file = "$dir/gitsign"
 $path = "$file.pub"
+
 ssh-keygen -t ed25519 -C $email.Trim() -N "" -f $file
 
 git config --global commit.gpgsign true
 git config --global user.signingkey $path
-if (!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
-    exit 1
-}
-Start-Service ssh-agent
-ssh-add $file
 
+if (!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
+	Start-Service ssh-agent
+}
+
+ssh-add $file
 
 if (!(gh auth status)) {
     Write-Host "Seems like you haven't set up your gh yet."
