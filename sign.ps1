@@ -38,7 +38,7 @@ ssh-keygen -t ed25519 -C $email.Trim() -N "" -f $file
 
 git config --global commit.gpgsign true
 git config --global user.signingkey $path
-if(!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
+if (!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
     exit 1
 }
 Start-Service ssh-agent
@@ -47,13 +47,13 @@ ssh-add $file
 
 if (!(gh auth status)) {
     Write-Host "Seems like you haven't set up your gh yet."
-    if (!(gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org) {
+    if (!(gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org)) {
 		exit 1
     }
 }
 $keyname = Read-Host "Enter your SSH key display name for GitHub (leave empty to skip signing key creation)"
 if (-not [string]::IsNullOrWhiteSpace($keyname)) {
-    if (!(gh ssh-key add $path --type signing --title $keyname) {
+    if (!(gh ssh-key add $path --type signing --title $keyname)) {
 		if (!(gh auth refresh -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org)) {
 			exit 1
 		}
