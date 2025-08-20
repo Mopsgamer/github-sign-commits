@@ -28,42 +28,45 @@ if ([string]::IsNullOrEmpty($name)) {
 }
 
 $dir = "C:/Users/$Env:UserName/.ssh"
-if (!(Test-Path -Path $dir)) {
-    New-Item -ItemType Directory -Path $dir
+if (-not (Test-Path -Path $dir)) {
+    New-Item -ItemType Directory -Path $dir | Out-Null
 }
 
 $file = "$dir/gitsign"
 $path = "$file.pub"
 
 ssh-keygen -t ed25519 -C $email.Trim() -N "" -f $file
+if ($LASTEXITCODE -ne 0) { exit 1 }
 
 git config --global commit.gpgsign true
 git config --global user.signingkey $path
 
-if (!(Get-Service -Name ssh-agent | Set-Service -StartupType Manual)) {
-	Start-Service ssh-agent
-}
+Get-Service -Name ssh-agent -ErrorAction SilentlyContinue | Set-Service -StartupType Manual
+Start-Service ssh-agent -ErrorAction SilentlyContinue
 
 ssh-add $file
+if ($LASTEXITCODE -ne 0) { exit 1 }
 
-if (!(gh auth status)) {
+gh auth status
+if ($LASTEXITCODE -ne 0) {
     Write-Host "Seems like you haven't set up your gh yet."
-    if (!(gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org)) {
-		exit 1
-    }
+    gh auth login -w -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org
+    if ($LASTEXITCODE -ne 0) { exit 1 }
 }
+
 $keyname = Read-Host "Enter your SSH key display name for GitHub (leave empty to skip signing key creation)"
 if (-not [string]::IsNullOrWhiteSpace($keyname)) {
-    if (!(gh ssh-key add $path --type signing --title $keyname)) {
-		if (!(gh auth refresh -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org)) {
-			exit 1
-		}
-		if (!(gh ssh-key add $path --type signing --title $keyname)) {
-			exit 1
-		}
-	}
+    gh ssh-key add $path --type signing --title $keyname
+    if ($LASTEXITCODE -ne 0) {
+        gh auth refresh -h github.com -s admin:ssh_signing_key,repo,gist,workflow,read:org
+        if ($LASTEXITCODE -ne 0) { exit 1 }
+
+        gh ssh-key add $path --type signing --title $keyname
+        if ($LASTEXITCODE -ne 0) { exit 1 }
+    }
     Write-Host "SSH signing key added to GitHub."
 } else {
     Write-Host "Skipping SSH signing key upload to GitHub."
 }
+
 Write-Host "git sign setup has been completed"
