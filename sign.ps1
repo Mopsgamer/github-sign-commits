@@ -16,6 +16,7 @@ git config --global gpg.format ssh
 $email = git config --get user.email
 if ([string]::IsNullOrEmpty($email)) {
     Write-Host "Seems like you haven't set up your git yet."
+    Write-Host "Consider using your GitHub noreply email address"
     $email = Read-Host "Enter your git email address"
     git config --global user.email $email
 }

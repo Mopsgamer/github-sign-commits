@@ -12,6 +12,7 @@ git config --global gpg.format ssh
 email=$(git config --get user.email)
 if [ -z "$email" ]; then
     echo "Seems like you haven't set up your git yet."
+    echo "Consider using your GitHub noreply email address"
     read -p "Enter your git email address: " email < /dev/tty
     git config --global user.email "$email"
 fi
