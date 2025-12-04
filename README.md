@@ -14,3 +14,11 @@ irm https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/m
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/sign.sh | bash
 ```
+
+### Check
+
+```bash
+ssh-keygen -l -f ~/.ssh/gitsign.pub | sed 's/\(SHA256:\)[^[:space:]]*/\1**/g'
+git config user.signingkey
+git config gpg.format
+```
