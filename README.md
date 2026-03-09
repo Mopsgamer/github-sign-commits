@@ -10,14 +10,9 @@ AKA Verified commits.
 irm https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/sign.ps1 | iex
 ```
 ```bash
-# $PROFILE
 # Ensure the ssh-agent service is running
-$agentService = Get-Service ssh-agent -ErrorAction SilentlyContinue
-if ($agentService.Status -ne 'Running') {
-    Start-Service ssh-agent
-}
-
-ssh-add "$HOME\.ssh\gitsign" 2>$null
+Set-Service ssh-agent -StartupType Automatic
+Start-Service ssh-agent
 ```
 
 ### Bash
@@ -25,20 +20,8 @@ ssh-add "$HOME\.ssh\gitsign" 2>$null
 curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/sign.sh | bash
 ```
 ```bash
-# ~/.bashrc
-# Ensure the ssh-agent service is running
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    eval "$(ssh-agent -s)" > /dev/null
-fi
-ssh-add "$HOME/.ssh/gitsign" 2>/dev/null
-```
-```fish
-# ~/.config/fish/config.fish
-# Ensure the ssh-agent service is running
-if not pgrep -u $USER ssh-agent > /dev/null
-    eval (ssh-agent -c) > /dev/null
-end
-ssh-add $HOME/.ssh/gitsign 2>/dev/null
+# ~/.bashrc # ~/.config/fish/config.fish
+ssh-add ~/.ssh/gitsign 2>/dev/null
 ```
 
 ### Check
