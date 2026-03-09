@@ -21,7 +21,7 @@ curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/
 ```
 ```bash
 # ~/.bashrc
-ssh-add ~/.ssh/gitsign
+ssh-add ~/.ssh/gitsign 2> /dev/null
 ```
 
 ### Check
