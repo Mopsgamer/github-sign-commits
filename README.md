@@ -20,8 +20,8 @@ Start-Service ssh-agent
 curl -fsSL https://raw.githubusercontent.com/Mopsgamer/github-sign-commits/refs/heads/main/sign.sh | bash
 ```
 ```bash
-# ~/.bashrc # ~/.config/fish/config.fish
-ssh-add ~/.ssh/gitsign 2>/dev/null
+# ~/.bashrc
+ssh-add ~/.ssh/gitsign
 ```
 
 ### Check
